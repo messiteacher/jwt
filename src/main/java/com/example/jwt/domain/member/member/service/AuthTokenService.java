@@ -6,6 +6,7 @@ import io.jsonwebtoken.security.Keys;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import javax.crypto.SecretKey;
 import java.util.Map;
 
 @Service
@@ -22,5 +23,19 @@ public class AuthTokenService {
                 expireSeconds,
                 Map.of("id", member.getId(), "username", member.getUsername())
         );
+    }
+
+    public Map<String, Object> getPayload(SecretKey secretKey, String token) {
+
+        Map<String, Object> payload = Ut.Jwt.getPayload(secretKey, token);
+
+        if (payload == null) return null;
+
+        Number idNo = (Number) payload.get("id");
+        long id = idNo.longValue();
+
+        String username = (String) payload.get("username");
+
+        return Map.of("id", id, "username", username);
     }
 }
