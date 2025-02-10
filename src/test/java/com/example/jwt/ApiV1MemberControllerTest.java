@@ -276,6 +276,9 @@ public class ApiV1MemberControllerTest {
     @DisplayName("내 정보 조회")
     void me1() throws Exception {
 
+        String apiKey = loginedMember.getApiKey();
+        String token = memberService.getAuthToken(loginedMember);
+
         ResultActions resultActions = meRequest(token);
 
         resultActions

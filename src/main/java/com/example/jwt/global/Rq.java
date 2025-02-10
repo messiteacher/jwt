@@ -3,12 +3,12 @@ package com.example.jwt.global;
 import com.example.jwt.domain.member.member.entity.Member;
 import com.example.jwt.domain.member.member.service.MemberService;
 import com.example.jwt.global.exception.ServiceException;
+import com.example.jwt.global.security.SecurityUser;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 import org.springframework.web.context.annotation.RequestScope;
@@ -38,9 +38,9 @@ public class Rq {
         return opActor.get();
     }
 
-    public void setLogin(String username) {
+    public void setLogin(Member actor) {
 
-        UserDetails user = new User(username, "", List.of());
+        UserDetails user = new SecurityUser(actor.getId(), actor.getUsername(), actor.getPassword(), List.of());
 
         SecurityContextHolder.getContext().setAuthentication(
                 new UsernamePasswordAuthenticationToken(user, null, user.getAuthorities())
@@ -54,13 +54,17 @@ public class Rq {
             throw new ServiceException("401-2", "로그인이 필요합니다.");
         }
 
-        UserDetails user = (UserDetails) authentication.getPrincipal();
-        if (user == null) {
-            throw new ServiceException("401-3", "로그인이 필요합니다.");
+        Object principal = authentication.getPrincipal();
+
+        if (!(principal instanceof SecurityUser)) {
+            throw new ServiceException("401-3", "잘못된 인증 정보입니다.");
         }
 
-        String username = user.getUsername();
+        SecurityUser user = (SecurityUser) authentication.getPrincipal();
 
-        return memberService.findByUsername(username).get();
+        return Member.builder()
+                .id(user.getId())
+                .username(user.getUsername())
+                .build();
     }
 }

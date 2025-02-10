@@ -38,11 +38,11 @@ public class CustomAuthenticationFilter extends OncePerRequestFilter {
             return ;
         }
 
-        String accessToken = authorizationHeader.substring("Bearer ".length());
+        String authToken = authorizationHeader.substring("Bearer ".length());
 
 //        Optional<Member> opMember = memberService.findByApiKey(apiKey);
 
-        Optional<Member> opMember = memberService.getMemberByAccessToken(accessToken);
+        Optional<Member> opMember = memberService.getMemberByAccessToken(authToken);
 
         if (opMember.isEmpty()) {
 
@@ -51,7 +51,7 @@ public class CustomAuthenticationFilter extends OncePerRequestFilter {
         }
 
         Member actor = opMember.get();
-        rq.setLogin(actor.getUsername());
+        rq.setLogin(actor);
 
         filterChain.doFilter(request, response);
     }
