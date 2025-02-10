@@ -2,39 +2,41 @@ package com.example.jwt.domain.member.member.service;
 
 import com.example.jwt.domain.member.member.entity.Member;
 import com.example.jwt.standard.Util.Ut;
-import io.jsonwebtoken.security.Keys;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
-import javax.crypto.SecretKey;
 import java.util.Map;
 
 @Service
 @RequiredArgsConstructor
 public class AuthTokenService {
 
+    @Value("${custom.jwt.secret-key}")
+    private String keyString;
+
+    @Value("${custom.jwt.expire-seconds}")
+    private int expireSeconds;
 
     public String genAccessToken(Member member) {
 
-        int expireSeconds = 60 * 60 * 24 * 365;
-
         return Ut.Jwt.createToken(
-                Keys.hmacShaKeyFor("abcdefghijklmnopqrstuvwxyz1234567890abcdefghijklmnopqrstuvwxyz1234567890".getBytes()),
+                keyString,
                 expireSeconds,
                 Map.of("id", member.getId(), "username", member.getUsername())
         );
     }
 
-    public Map<String, Object> getPayload(SecretKey secretKey, String token) {
+    public Map<String, Object> getPayload(String token) {
 
-        Map<String, Object> payload = Ut.Jwt.getPayload(secretKey, token);
+        Map<String, Object> payload = Ut.Jwt.getPayload(keyString, token);
 
-        if (payload == null) return null;
+        if(payload == null) return null;
 
-        Number idNo = (Number) payload.get("id");
+        Number idNo = (Number)payload.get("id");
         long id = idNo.longValue();
 
-        String username = (String) payload.get("username");
+        String username = (String)payload.get("username");
 
         return Map.of("id", id, "username", username);
     }
