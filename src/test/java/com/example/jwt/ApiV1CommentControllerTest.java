@@ -1,9 +1,12 @@
 package com.example.jwt;
 
+import com.example.jwt.domain.member.member.entity.Member;
+import com.example.jwt.domain.member.member.service.MemberService;
 import com.example.jwt.domain.post.comment.controller.ApiV1CommentController;
 import com.example.jwt.domain.post.comment.entity.Comment;
 import com.example.jwt.domain.post.post.entity.Post;
 import com.example.jwt.domain.post.post.service.PostService;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,17 +36,29 @@ public class ApiV1CommentControllerTest {
     @Autowired
     private PostService postService;
 
+    @Autowired
+    private MemberService memberService;
+
+    private Member loginedMember;
+    private String token;
+
+    @BeforeEach
+    void login() {
+        loginedMember = memberService.findByUsername("user1").get();
+        token = memberService.getAuthToken(loginedMember);
+    }
+
     @Test
     @DisplayName("댓글 작성")
     void write() throws Exception {
 
         long postId = 1;
-        String apiKey = "user1";
         String content = "댓글 내용";
 
-        ResultActions resultActions = mvc.perform(
+        ResultActions resultActions = mvc
+                .perform(
                         post("/api/v1/posts/%d/comments".formatted(postId))
-                                .header("Authorization", "Bearer " + apiKey)
+                                .header("Authorization", "Bearer " + token)
                                 .content("""
                                         {
                                             "content": "%s"
@@ -60,7 +75,8 @@ public class ApiV1CommentControllerTest {
         Post post = postService.getItem(postId).get();
         Comment comment = post.getLatestComment();
 
-        resultActions.andExpect(status().isCreated())
+        resultActions
+                .andExpect(status().isCreated())
                 .andExpect(handler().handlerType(ApiV1CommentController.class))
                 .andExpect(handler().methodName("write"))
                 .andExpect(jsonPath("$.code").value("201-1"))
@@ -73,12 +89,12 @@ public class ApiV1CommentControllerTest {
 
         long postId = 1;
         long commentId = 1;
-        String apiKey = "user1";
         String content = "댓글 내용";
 
-        ResultActions resultActions = mvc.perform(
+        ResultActions resultActions = mvc
+                .perform(
                         put("/api/v1/posts/%d/comments/%d".formatted(postId, commentId))
-                                .header("Authorization", "Bearer " + apiKey)
+                                .header("Authorization", "Bearer " + token)
                                 .content("""
                                         {
                                             "content": "%s"
@@ -92,10 +108,8 @@ public class ApiV1CommentControllerTest {
                 )
                 .andDo(print());
 
-        Post post = postService.getItem(postId).get();
-        Comment comment = post.getLatestComment();
-
-        resultActions.andExpect(status().isOk())
+        resultActions
+                .andExpect(status().isOk())
                 .andExpect(handler().handlerType(ApiV1CommentController.class))
                 .andExpect(handler().methodName("modify"))
                 .andExpect(jsonPath("$.code").value("200-1"))
@@ -108,15 +122,16 @@ public class ApiV1CommentControllerTest {
 
         long postId = 1;
         long commentId = 1;
-        String apiKey = "user1";
 
-        ResultActions resultActions = mvc.perform(
+        ResultActions resultActions = mvc
+                .perform(
                         delete("/api/v1/posts/%d/comments/%d".formatted(postId, commentId))
-                                .header("Authorization", "Bearer " + apiKey)
+                                .header("Authorization", "Bearer " + token)
                 )
                 .andDo(print());
 
-        resultActions.andExpect(status().isOk())
+        resultActions
+                .andExpect(status().isOk())
                 .andExpect(handler().handlerType(ApiV1CommentController.class))
                 .andExpect(handler().methodName("delete"))
                 .andExpect(jsonPath("$.code").value("200-1"))
@@ -125,15 +140,19 @@ public class ApiV1CommentControllerTest {
 
     @Test
     @DisplayName("댓글 다건 조회")
-    void items() throws Exception{
+    void items() throws Exception {
 
         long postId = 1;
 
-        ResultActions resultActions = mvc.perform(
-                get("/api/v1/posts/%d/comments".formatted(postId))
-        ).andDo(print());
+        ResultActions resultActions = mvc
+                .perform(
+                        get("/api/v1/posts/%d/comments".formatted(postId)
+                        )
+                )
+                .andDo(print());
 
-        resultActions.andExpect(status().isOk())
+        resultActions
+                .andExpect(status().isOk())
                 .andExpect(handler().handlerType(ApiV1CommentController.class))
                 .andExpect(handler().methodName("getItems"))
                 .andExpect(jsonPath("$.length()").value(2))
