@@ -16,7 +16,7 @@ import java.util.List;
 @NoArgsConstructor
 @Getter
 @Setter
-@Builder
+@SuperBuilder
 public class Post extends BaseTime {
 
     @ManyToOne(fetch = FetchType.LAZY)

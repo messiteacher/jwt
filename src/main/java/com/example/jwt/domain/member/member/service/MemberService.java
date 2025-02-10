@@ -51,12 +51,18 @@ public class MemberService {
 
         Map<String, Object> payload = authTokenService.getPayload(accessToken);
 
-        if(payload == null) {
+        if (payload == null) {
             return Optional.empty();
         }
 
         long id = (long) payload.get("id");
+        String username = (String) payload.get("username");
 
-        return memberRepository.findById(id);
+        return Optional.of(
+                Member.builder()
+                        .id(id)
+                        .username(username)
+                        .build()
+        );
     }
 }
