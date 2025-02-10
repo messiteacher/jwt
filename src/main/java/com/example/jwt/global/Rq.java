@@ -40,7 +40,7 @@ public class Rq {
 
     public void setLogin(Member actor) {
 
-        UserDetails user = new SecurityUser(actor.getId(), actor.getUsername(), actor.getPassword(), List.of());
+        UserDetails user = new SecurityUser(actor.getId(), actor.getUsername(), "", List.of());
 
         SecurityContextHolder.getContext().setAuthentication(
                 new UsernamePasswordAuthenticationToken(user, null, user.getAuthorities())

@@ -90,8 +90,6 @@ public class ApiV1PostController {
     public RsData<PostWithContentDto> write(@RequestBody @Valid WriteReqBody reqBody) {
 
         Member actor = rq.getActor();
-
-//        Member actor = rq.getAuthenticateActor();
         Post post = postService.write(actor, reqBody.title(), reqBody.content(), reqBody.published(), reqBody.listed());
 
         return new RsData<>(
