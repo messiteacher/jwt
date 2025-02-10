@@ -50,7 +50,7 @@ public class AuthTokenServiceTest {
     }
 
     @Test
-    @DisplayName("access token 생성")
+    @DisplayName("user1 - access token 생성")
     void accessToken() {
 
         Member member = memberService.findByUsername("user1").get();

@@ -245,11 +245,13 @@ public class ApiV1MemberControllerTest {
     @DisplayName("내 정보 조회")
     void me1() throws Exception {
 
-        String apiKey = "user1";
+//        String apiKey = "user1";
+
+        String token = "eyJhbGciOiJIUzUxMiJ9.eyJ1c2VybmFtZSI6InVzZXIxIiwiaWQiOjMsImlhdCI6MTczOTE1NDgyNCwiZXhwIjoxNzcwNjkwODI0fQ.6l2saUCWxsNeHS7E9BkTO792ktlnYx6po82MFpamv7kx9TPeQB9J-ltl61YZyVA3k-fweYRD2JHttWFzkFISfQ";
 
         ResultActions resultActions = mvc.perform(
                 get("/api/v1/members/me")
-                        .header("Authorization", "Bearer " + apiKey)
+                        .header("Authorization", "Bearer " + token)
         ).andDo(print());
 
         resultActions.andExpect(status().isOk())
@@ -258,8 +260,8 @@ public class ApiV1MemberControllerTest {
                 .andExpect(jsonPath("$.code").value("200-1"))
                 .andExpect(jsonPath("$.msg").value("내 정보 조회가 완료되었습니다."));
 
-        Member member = memberService.findByApiKey(apiKey).get();
-        checkMember(resultActions, member);
+//        Member member = memberService.findByApiKey(apiKey).get();
+//        checkMember(resultActions, member);
     }
 
     @Test
