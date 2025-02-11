@@ -538,8 +538,9 @@ public class ApiV1PostControllerTest {
     }
 
     @Test
-    @DisplayName("통계")
-    void statistics() throws Exception {
+    @DisplayName("통계 - 관리자 기능 - 관리자 접근")
+    @WithUserDetails("admin")
+    void statisticsAdmin() throws Exception {
 
         ResultActions resultActions = mvc.perform(
                         get("/api/v1/posts/statistics")
@@ -555,5 +556,24 @@ public class ApiV1PostControllerTest {
                 .andExpect(jsonPath("$.data.postCount").value(10))
                 .andExpect(jsonPath("$.data.postPublishedCount").value(10))
                 .andExpect(jsonPath("$.data.postListedCount").value(10));
+    }
+
+    @Test
+    @DisplayName("통계 - 관리자 기능 - user1 접근")
+    @WithUserDetails("user1")
+    void statisticsUser() throws Exception {
+
+        ResultActions resultActions = mvc.perform(
+                        get("/api/v1/posts/statistics")
+                                .header("Authorization", "Bearer " + token)
+                )
+                .andDo(print());
+
+        resultActions
+                .andExpect(status().isForbidden())
+                .andExpect(handler().handlerType(ApiV1PostController.class))
+                .andExpect(handler().methodName("getStatistics"))
+                .andExpect(jsonPath("$.code").value("403-1"))
+                .andExpect(jsonPath("$.msg").value("접근 권한이 없습니다."));
     }
 }
