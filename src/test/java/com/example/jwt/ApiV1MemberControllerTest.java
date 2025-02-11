@@ -186,8 +186,6 @@ public class ApiV1MemberControllerTest {
                 .andExpect(jsonPath("$.data.item.modifiedDate").value(matchesPattern(member.getModifiedDate().toString().replaceAll("0+$", "") + ".*")))
                 .andExpect(jsonPath("$.data.apiKey").value(member.getApiKey()))
                 .andExpect(jsonPath("$.data.accessToken").exists());
-
-
     }
 
     @Test
@@ -205,7 +203,6 @@ public class ApiV1MemberControllerTest {
                 .andExpect(handler().methodName("login"))
                 .andExpect(jsonPath("$.code").value("401-2"))
                 .andExpect(jsonPath("$.msg").value("비밀번호가 일치하지 않습니다."));
-
     }
 
     @Test
@@ -313,8 +310,9 @@ public class ApiV1MemberControllerTest {
 
         String apiKey = loginedMember.getApiKey();
         String expiredToken = apiKey + " eyJhbGciOiJIUzUxMiJ9.eyJpZCI6MywidXNlcm5hbWUiOiJ1c2VyMSIsImlhdCI6MTczOTI0MDc2MSwiZXhwIjoxNzM5MjQwNzY2fQ.MdN2yw9ZlM6WESp1F1DviK0ehXsQWmTQgQIcqbWZJge0qkJ2jk5jP-KyMBXQfo71QDbJj6fLdHbcoq2wxHTt0A";
+        String wrongToken = apiKey + " " + "11";
 
-        ResultActions resultActions = meRequest(token);
+        ResultActions resultActions = meRequest(wrongToken);
 
         resultActions
                 .andExpect(status().isOk())
