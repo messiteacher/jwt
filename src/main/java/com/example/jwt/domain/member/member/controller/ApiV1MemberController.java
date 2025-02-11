@@ -6,7 +6,6 @@ import com.example.jwt.domain.member.member.service.MemberService;
 import com.example.jwt.global.Rq;
 import com.example.jwt.global.dto.RsData;
 import com.example.jwt.global.exception.ServiceException;
-import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
@@ -57,15 +56,8 @@ public class ApiV1MemberController {
 
         String accessToken = memberService.genAccessToken(member);
 
-        Cookie accessTokenCookie = new Cookie("accessToken", accessToken);
-
-        accessTokenCookie.setDomain("localhost");
-        accessTokenCookie.setPath("/");
-        accessTokenCookie.setHttpOnly(true);
-        accessTokenCookie.setSecure(true);
-        accessTokenCookie.setAttribute("SameSite", "Strict");
-
-        response.addCookie(accessTokenCookie);
+        rq.addCookie("accessToken", accessToken);
+        rq.addCookie("apiKey", member.getApiKey());
 
         return new RsData<>(
                 "200-1",
