@@ -571,8 +571,6 @@ public class ApiV1PostControllerTest {
 
         resultActions
                 .andExpect(status().isForbidden())
-                .andExpect(handler().handlerType(ApiV1PostController.class))
-                .andExpect(handler().methodName("getStatistics"))
                 .andExpect(jsonPath("$.code").value("403-1"))
                 .andExpect(jsonPath("$.msg").value("접근 권한이 없습니다."));
     }

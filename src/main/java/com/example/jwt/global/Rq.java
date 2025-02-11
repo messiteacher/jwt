@@ -13,7 +13,6 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 import org.springframework.web.context.annotation.RequestScope;
 
-import java.util.List;
 import java.util.Optional;
 
 @Component
@@ -40,7 +39,7 @@ public class Rq {
 
     public void setLogin(Member actor) {
 
-        UserDetails user = new SecurityUser(actor.getId(), actor.getUsername(), "", List.of());
+        UserDetails user = new SecurityUser(actor.getId(), actor.getUsername(), "", actor.getAuthorities());
 
         SecurityContextHolder.getContext().setAuthentication(
                 new UsernamePasswordAuthenticationToken(user, null, user.getAuthorities())
