@@ -60,11 +60,7 @@ public class Ut {
             return true;
         }
 
-
-
         public static Map<String, Object> getPayload(String keyString, String jwtStr) {
-
-            if (!Ut.Jwt.isValidToken(keyString, jwtStr)) return null;
 
             SecretKey secretKey = Keys.hmacShaKeyFor(keyString.getBytes());
 
