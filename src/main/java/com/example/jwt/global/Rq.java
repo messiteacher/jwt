@@ -96,4 +96,18 @@ public class Rq {
     public Member getRealActor(Member actor) {
         return memberService.findById(actor.getId()).get();
     }
+
+    public void removeCookie(String name) {
+
+        Cookie cookie = new Cookie(name, null);
+
+        cookie.setDomain("localhost");
+        cookie.setPath("/");
+        cookie.setHttpOnly(true);
+        cookie.setSecure(true);
+        cookie.setAttribute("SameSite", "Strict");
+        cookie.setMaxAge(0);
+
+        response.addCookie(cookie);
+    }
 }
