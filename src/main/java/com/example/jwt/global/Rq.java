@@ -92,4 +92,8 @@ public class Rq {
 
         response.addCookie(accessTokenCookie);
     }
+
+    public Member getRealActor(Member actor) {
+        return memberService.findById(actor.getId()).get();
+    }
 }

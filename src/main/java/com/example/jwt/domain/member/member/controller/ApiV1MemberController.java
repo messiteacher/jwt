@@ -73,12 +73,12 @@ public class ApiV1MemberController {
     public RsData<MemberDto> me() {
 
         Member actor = rq.getActor();
-        Member member = memberService.findById(actor.getId()).get();
+        Member realActor = rq.getRealActor(actor);
 
         return new RsData<>(
                 "200-1",
                 "내 정보 조회가 완료되었습니다.",
-                new MemberDto(member)
+                new MemberDto(realActor)
         );
     }
 }
